@@ -17,6 +17,10 @@ QLineEdit {
     qproperty-alignment: AlignRight;
 }
 
+QLineEdit[flashing="true"] {
+    padding-right: 2px;
+}
+
 /* Default style for all buttons */
 QPushButton {
     background-color: #333333;
