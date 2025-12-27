@@ -1,0 +1,61 @@
+/* Apply to the main window */
+QWidget {
+    background-color: #1e1e1e;
+    font-family: 'Segoe UI', Arial;
+}
+
+/* Style the display box */
+QLineEdit {
+    background-color: #252526;
+    color: #dcdcdc;
+    border: 1px solid #3e3e42;
+    border-radius: 4px;
+    font-size: 24px;
+    padding: 10px;
+    margin-bottom: 10px;
+    height: 24px;
+    qproperty-alignment: AlignRight;
+}
+
+/* Default style for all buttons */
+QPushButton {
+    background-color: #333333;
+    color: white;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    height: 60px;
+}
+
+/* Target specific buttons (Operations) */
+QPushButton[text="+"], QPushButton[text="-"], 
+QPushButton[text="*"], QPushButton[text="/"] {
+    background-color: #d4d4d4;
+    color: #1e1e1e;
+}
+
+/* Target the Equals button specifically */
+QPushButton[text="="] {
+    background-color: #0e639c;
+}
+
+QPushButton[text="<-"] {
+    background-color: #f39c12; /* Orange for warning/backspace */
+    color: white;
+}
+
+QPushButton[text="C"] {
+    background-color: #e74c3c; /* Red for clear */
+    color: white;
+    font-weight: bold;
+}
+
+/* Hover effect */
+QPushButton:hover {
+    background-color: #444444;
+}
+
+/* Clicking effect */
+QPushButton:pressed {
+    background-color: #007acc;
+}
