@@ -17,10 +17,6 @@ QLineEdit {
     qproperty-alignment: AlignRight;
 }
 
-QLineEdit[flashing="true"] {
-    padding-right: 2px;
-}
-
 /* Default style for all buttons */
 QPushButton {
     background-color: #333333;
@@ -28,7 +24,8 @@ QPushButton {
     border-radius: 8px;
     font-size: 18px;
     font-weight: bold;
-    height: 60px;
+    /* height: 60px; */
+    height: 100%;
 }
 
 /* Target specific buttons (Operations) */
@@ -45,6 +42,12 @@ QPushButton[text="="] {
 
 QPushButton[text="<-"] {
     background-color: #f39c12; /* Orange for warning/backspace */
+    color: white;
+}
+
+QPushButton[text="↵"] {
+    height: 425%;
+    background-color: #2e2443; /* Orange for warning/backspace */
     color: white;
 }
 
