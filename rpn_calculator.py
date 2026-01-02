@@ -19,10 +19,6 @@ def calculate(input: List[CalculatorItem]):
     return result
 
 def _apply_operation(a: float | int, b: float | int, operator: Operator):
-    # if not(isNumber(a) and isNumber(b)):
-    #     raise TypeError(f"One of the operands is not a number: {a}, {b}")
-    # if not isinstance(operator, Operator):
-    #     raise TypeError(f"One of the supplied operators is not an operator: {operator}")
     match operator:
         case Operator.ADD:
             return a + b

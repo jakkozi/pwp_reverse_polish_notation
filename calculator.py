@@ -64,36 +64,39 @@ class Calculator(QWidget):
         # Backspace Button: Row 0, Col 2, spans 1 row, spans 2 columns
         btn_back = QPushButton("<-")
         btn_back.clicked.connect(lambda: self._backspace())
+        btn_back.setShortcut("Backspace")
         self.grid_layout.addWidget(btn_back, 0, 2, 1, 3)
 
         # Enter Button: Row 1, Col 4, spans 3 row, spans 1 columns
         btn_back = QPushButton("↵")
         btn_back.clicked.connect(lambda: self._enter())
+        btn_back.setShortcut("Enter")
         self.grid_layout.addWidget(btn_back, 1, 4, 3, 1)
 
-        # Define button labels and their positions (row, col)
+        # "Label": (positio, value, shortcut)
         buttons = {
-            "7": ((1, 0), 7),
-            "8": ((1, 1), 8),
-            "9": ((1, 2), 9),
-            "/": ((1, 3), Operator.DIV),
-            "4": ((2, 0), 4),
-            "5": ((2, 1), 5),
-            "6": ((2, 2), 6),
-            "*": ((2, 3), Operator.MUL),
-            "1": ((3, 0), 1),
-            "2": ((3, 1), 2),
-            "3": ((3, 2), 3),
-            "-": ((3, 3), Operator.SUB),
-            ".": ((4, 0), Operator.DOT),
-            "0": ((4, 1), 0),
-            "+/-": ((4, 2), Operator.NEG),
-            "+": ((4, 3), Operator.ADD),
-            "=": ((4, 4), Operator.EQU),
+            "7": ((1, 0), 7, '7'),
+            "8": ((1, 1), 8, '8'),
+            "9": ((1, 2), 9, '9'),
+            "/": ((1, 3), Operator.DIV, '/'),
+            "4": ((2, 0), 4, '4'),
+            "5": ((2, 1), 5, '5'),
+            "6": ((2, 2), 6, '6'),
+            "*": ((2, 3), Operator.MUL, '*'),
+            "1": ((3, 0), 1, '1'),
+            "2": ((3, 1), 2, '2'),
+            "3": ((3, 2), 3, '3'),
+            "-": ((3, 3), Operator.SUB, '-'),
+            ".": ((4, 0), Operator.DOT, ','),
+            "0": ((4, 1), 0, '0'),
+            "+/-": ((4, 2), Operator.NEG, 'Alt+-'),
+            "+": ((4, 3), Operator.ADD, '+'),
+            "=": ((4, 4), Operator.EQU, "Alt+Enter"),
         }
 
-        for text, (pos, val) in buttons.items():
+        for text, (pos, val, shortcut) in buttons.items():
             btn = QPushButton(text)
+            btn.setShortcut(shortcut)
 
             match val:
                 case Operator.EQU:
