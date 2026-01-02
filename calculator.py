@@ -1,8 +1,9 @@
 from PyQt6.QtWidgets import QWidget, QGridLayout, QLineEdit, QPushButton, QVBoxLayout
 from PyQt6.QtCore import QTimer
 from functools import wraps
-from calculator_item import Operator, CalculatorItem
+from calculator_item import Operator, CalculatorItem, isNumber
 from typing import List
+import rpn_calculator as RPNCalculator
 
 
 def sync_ui(method):
@@ -65,10 +66,10 @@ class Calculator(QWidget):
         btn_back.clicked.connect(lambda: self._backspace())
         self.grid_layout.addWidget(btn_back, 0, 2, 1, 3)
 
-        # Enter Button: Row 1, Col 4, spans 4 row, spans 1 columns
+        # Enter Button: Row 1, Col 4, spans 3 row, spans 1 columns
         btn_back = QPushButton("↵")
         btn_back.clicked.connect(lambda: self._enter())
-        self.grid_layout.addWidget(btn_back, 1, 4, 4, 1)
+        self.grid_layout.addWidget(btn_back, 1, 4, 3, 1)
 
         # Define button labels and their positions (row, col)
         buttons = {
@@ -86,8 +87,9 @@ class Calculator(QWidget):
             "-": ((3, 3), Operator.SUB),
             ".": ((4, 0), Operator.DOT),
             "0": ((4, 1), 0),
-            "=": ((4, 2), Operator.EQU),
+            "+/-": ((4, 2), Operator.NEG),
             "+": ((4, 3), Operator.ADD),
+            "=": ((4, 4), Operator.EQU),
         }
 
         for text, (pos, val) in buttons.items():
@@ -126,24 +128,44 @@ class Calculator(QWidget):
     def _backspace(self):
         if len(self.currently_inputed_number) > 0:
             self.currently_inputed_number.pop()
+            if len(self.currently_inputed_number) == 2 and self.currently_inputed_number[0] == '-' and self.currently_inputed_number[1] == '0':
+                self.currently_inputed_number=['0']
         elif len(self.expression) > 0:
-            self.expression.pop()
+            lastValue = self.expression.pop()
+
+            if isNumber(lastValue):
+                self.currently_inputed_number = list(str(lastValue))
+                self.currently_inputed_number.pop()
 
     @sync_ui
     def _append_text(self, val: CalculatorItem):
         match val:
             case 0:
-                if not (len(self.currently_inputed_number) == 1 and self.currently_inputed_number[0] == "0"):
-                    self.currently_inputed_number.append(str(val))    
+                if not (
+                    len(self.currently_inputed_number) == 1
+                    and self.currently_inputed_number[0] == "0"
+                ):
+                    self.currently_inputed_number.append(str(val))
             case float(val) | int(val):
-                self.currently_inputed_number.append(str(val))
+                if len(self.currently_inputed_number) == 1 and self.currently_inputed_number[0] == "0":
+                    self.currently_inputed_number[0] = str(val)
+                else:
+                    self.currently_inputed_number.append(str(val))
+            case Operator.NEG:
+                if len(self.currently_inputed_number) > 0:
+                    firstCharacter = self.currently_inputed_number[0]
+                    if firstCharacter == '-':
+                        self.currently_inputed_number.pop(0)
+                    elif firstCharacter != '0' or firstCharacter == '0' and len(self.currently_inputed_number) > 1:
+                        self.currently_inputed_number.insert(0, '-')
+
             case Operator.DOT:
                 if "." not in self.currently_inputed_number:
                     if len(self.currently_inputed_number) == 0:
                         self.currently_inputed_number.append("0")
                         self.currently_inputed_number.append(".")
                     else:
-                        self.currently_inputed_number.append(".")   
+                        self.currently_inputed_number.append(".")
             case _:
                 self._enter()
                 self.expression.append(val)
@@ -154,7 +176,10 @@ class Calculator(QWidget):
 
             if "." in self.currently_inputed_number:
                 # Remove trailing zeros
-                while self.currently_inputed_number and self.currently_inputed_number[-1] == "0":
+                while (
+                    self.currently_inputed_number
+                    and self.currently_inputed_number[-1] == "0"
+                ):
                     self.currently_inputed_number.pop()
 
                 # Remove unused dot
@@ -163,18 +188,22 @@ class Calculator(QWidget):
 
             number_str = "".join(self.currently_inputed_number)
             self.currently_inputed_number.clear()
-            self.expression.append(float(number_str) if "." in number_str else int(number_str) )
+            self.expression.append(
+                float(number_str) if "." in number_str else int(number_str)
+            )
 
     @sync_ui
     def _clear_display(self):
+        self.currently_inputed_number.clear()
         self.expression.clear()
 
     @sync_ui
     def _calculate_result(self):
         self._enter()
         try:
-            # eval() is the simplest way to solve math strings
-            result = eval("".join(self.expression))
+            result = RPNCalculator.calculate(self.expression)
+            if result.is_integer():
+                result = int(result)
             self.expression = [str(result)]
-        except Exception:
-            self.expression = ["Error"]
+        except Exception as e:
+            self.expression = [e]

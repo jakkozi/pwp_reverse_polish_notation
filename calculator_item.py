@@ -1,6 +1,5 @@
 from enum import Enum
 from typing import Union
-from dataclasses import dataclass
 
 class Operator(Enum):
     ADD = "+"
@@ -15,3 +14,6 @@ class Operator(Enum):
         return self.value
 
 CalculatorItem = Union[Operator, float, int]
+
+def isNumber(a):
+    return isinstance(a, (float, int))
