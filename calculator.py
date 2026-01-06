@@ -6,6 +6,8 @@ from typing import List
 import rpn_calculator as RPNCalculator
 
 
+#TODO: change window name, fix error not disapearing when starting new equation
+
 def sync_ui(method):
     @wraps(method)
     def wrapper(self, *args, **kwargs):
@@ -27,7 +29,7 @@ class Calculator(QWidget):
         self.expression: List[CalculatorItem] = []
         self.currently_inputed_number: List[str] = []
 
-        self.setWindowTitle("PyQt6 Calculator")
+        self.setWindowTitle("Polish Reverse Notation Calculator")
         width, height = 400, 450
         self.setFixedSize(width, height)  # Starting size
         # Explicitly force the range to match
@@ -142,6 +144,8 @@ class Calculator(QWidget):
 
     @sync_ui
     def _append_text(self, val: CalculatorItem):
+        if any(isinstance(item, Exception) for item in self.expression):
+            self.expression = []
         match val:
             case 0:
                 if not (
